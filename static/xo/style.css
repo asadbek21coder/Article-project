@@ -1,0 +1,119 @@
+body {
+    background-color: black;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    padding-left: 15%;
+    padding-right: 15%;
+    padding-top: 0.5%;
+}
+
+.block {
+    background-color:darkmagenta;
+    width:60%;
+    align-content: center;
+    padding-left: 20%;
+    padding-right: 20%;
+    padding-top: 2%;
+}
+
+.Info {
+    align-items: center;
+    text-align: center;
+    font-size:30px;
+
+}
+
+#play {
+    align-items: center;
+    text-align: center;
+    font-weight:bold;
+    font-size: 50px;
+    color:aliceblue;
+    padding-bottom: 10px;
+}
+#restart {
+    text-align:center;
+    margin:0 auto;
+    font-size: bold;
+    font-size: 20px;
+    background-color:rgb(227, 198, 177);
+    color:darkmagenta;
+    border-radius:15px;
+    height:32px;
+    padding-top:2px;
+    width:30%;
+    height:50px;
+
+}
+
+.buttons {
+    padding-top: 50px;
+    padding-bottom: 80px;
+    padding-left: 30px;
+    padding-right: 30px;
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-content: center;
+    background-color: darkmagenta;
+    grid-gap: 1px white;
+}
+
+.buttons div {
+        height: 100px;
+        color: white;
+        font-size:60px;
+        text-align:center;
+        padding-top: 10%;
+
+}
+.score div {
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    padding-top:20px;
+    padding-left: 5px;
+    font-size: 30px;
+    font-weight: bold;
+    color:cornsilk;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+#button1 {
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+}
+#button2{
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    border-right: 1px solid white;
+}
+#button3 {
+    border-left: 1px solid white;
+    border-bottom: 1px solid;
+}
+#button4 {
+    border-right: 1px solid;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+}
+#button5 {
+    border: 1px solid;
+}
+#button6 {
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+     border-left: 1px solid;
+}
+#button7 {
+    border-top:1px solid;
+    border-right:1px solid;
+}
+#button8 {
+  border-left: 1px solid;
+  border-right: 1px solid;
+  border-top: 1px solid;
+}
+
+#button9 {
+  border-left: 1px solid;
+  border-top: 1px solid;
+}

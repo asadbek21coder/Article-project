@@ -1,0 +1,7 @@
+docker run --name postgres-name --hostname postgres-host -d -p 5432:5432 -e POSTGRES_PASSWORD=qwerty123 arm64v8/postgres
+
+docker run --name pgadmin-name --hostname pgadmin-host -d -p 5050:5050 thajeztah/pgadmin4
+
+docker exec -it <container_id or name> /bin/bash
+
+docker exec -it postgres-name /bin/bash

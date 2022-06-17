@@ -2,14 +2,13 @@ package storage
 
 import (
 	"github.com/saidamir98/project6/models"
-	"github.com/saidamir98/project6/storage/inmemory"
+	"github.com/saidamir98/project6/storage/postgres"
 )
 
-var Store = inmemory.ArticleRepo
+var Store = postgres.ArticleRepo
 
 func init() {
-	Store.CreateArticle(models.Article{
-		ID: "1",
+	err := Store.CreateArticle(models.Article{
 		Content: models.Content{
 			Title: "title1",
 			Body:  "body1",
@@ -20,8 +19,11 @@ func init() {
 		},
 	})
 
-	Store.CreateArticle(models.Article{
-		ID: "2",
+	if err != nil {
+		panic(err)
+	}
+
+	err = Store.CreateArticle(models.Article{
 		Content: models.Content{
 			Title: "title2",
 			Body:  "body2",
@@ -31,4 +33,7 @@ func init() {
 			Lastname:  "doe2",
 		},
 	})
+	if err != nil {
+		panic(err)
+	}
 }

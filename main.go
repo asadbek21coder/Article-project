@@ -3,9 +3,12 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/saidamir98/project6/handlers"
+	"github.com/saidamir98/project6/storage/postgres"
 )
 
 func main() {
+	defer postgres.ArticleRepo.CloseDB()
+
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
 

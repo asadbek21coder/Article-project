@@ -16,33 +16,6 @@ type articleRepoImpl struct {
 
 var ArticleRepo = articleRepoImpl{}
 
-var dbSchema = `
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-CREATE TABLE IF NOT EXISTS "article" (
-	"id" UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
-	"title" varchar,
-	"body" text,
-	"author_id" UUID,
-	"created_at" timestamp NOT NULL DEFAULT NOW(),
-	"updated_at" timestamp NOT NULL DEFAULT NOW()
-  );
-
-  CREATE UNIQUE INDEX unique_title_on_article ON "article" ("title");
-  
-  CREATE TABLE IF NOT EXISTS "author" (
-	"id" UUID PRIMARY KEY DEFAULT uuid_generate_v1(),
-	"firstname" varchar,
-	"lastname" varchar,
-	"created_at" timestamp NOT NULL DEFAULT NOW(),
-	"updated_at" timestamp NOT NULL DEFAULT NOW()
-  );
-  
-  CREATE UNIQUE INDEX unique_firstname_lastname_on_author ON "author" ("firstname", "lastname");
-  
-  ALTER TABLE "article" ADD CONSTRAINT article_author_id_fkey FOREIGN KEY ("author_id") REFERENCES "author" ("id") ON DELETE CASCADE;
-`
-
 func (r articleRepoImpl) CloseDB() error {
 	return r.db.Close()
 }
@@ -51,22 +24,6 @@ func init() {
 	db, err := sqlx.Connect("postgres", "user=postgres dbname=bootcamp password=qwerty123 sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	db.MustExec(dbSchema)
-	db.MustExec(`DELETE FROM "author"`)
-	db.MustExec(`DELETE FROM "article"`)
-
-	tx := db.MustBegin()
-
-	tx.MustExec(`INSERT INTO "author" ("firstname", "lastname") VALUES ($1, $2)`, "John", "Doe")
-
-	tx.MustExec(`INSERT INTO "author" ("firstname", "lastname") VALUES ($1, $2)`, "Steve", "Jobs")
-
-	err = tx.Commit()
-	if err != nil {
-		err = tx.Rollback()
-		panic(err)
 	}
 
 	ArticleRepo.db = db

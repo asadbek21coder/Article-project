@@ -1,0 +1,3 @@
+migrate create -ext sql -dir ./migrations/postgres -seq -digits 2 create_tables
+
+migrate -path ./migrations/postgres -database 'postgres://postgres:qwerty123@localhost:5432/bootcamp?sslmode=disable' up

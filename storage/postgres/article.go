@@ -74,14 +74,52 @@ func (r articleRepoImpl) CreateArticle(entity models.Article) error {
 	return nil
 }
 
-func (r articleRepoImpl) GetArticleList(search string) (resp []models.Article) {
-	//select ar.id, ar.title, ar.body, au.firstname, au.lastname from article as ar join author au on au.id = ar.author_id;
-	// for _, v := range r.db {
-	// 	// TODO - filter result based on 'search' query param
-	// 	resp = append(resp, v)
-	// }
+func (r articleRepoImpl) GetArticleList(search string) (resp []models.Article, err error) {
+	params := make(map[string]interface{})
 
-	return resp
+	q := `SELECT
+	ar.id,
+	ar.title,
+	ar.body,
+	au.firstname,
+	au.lastname,
+	ar.created_at,
+	ar.updated_at
+	FROM article AS ar JOIN author au ON au.id = ar.author_id
+	`
+
+	if len(search) > 0 {
+		params["search"] = search
+		q += " WHERE (ar.title ILIKE '%' || :search || '%') OR (ar.body ILIKE '%' || :search || '%')"
+	}
+
+	rows, err := r.db.NamedQuery(q, params)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var e models.Article
+
+		err = rows.Scan(
+			&e.ID,
+			&e.Title,
+			&e.Body,
+			&e.Author.Firstname,
+			&e.Author.Lastname,
+			&e.CreatedAt,
+			&e.UpdateAt,
+		)
+
+		// err := rows.StructScan(&e)
+
+		if err != nil {
+			return nil, err
+		}
+		resp = append(resp, e)
+	}
+
+	return resp, err
 }
 
 func (r articleRepoImpl) UpdateArticle(entity models.Article) error {

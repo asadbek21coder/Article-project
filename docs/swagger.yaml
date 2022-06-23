@@ -1,0 +1,122 @@
+basePath: /api/v1
+definitions:
+  models.Article:
+    properties:
+      author:
+        $ref: '#/definitions/models.Person'
+      body:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      title:
+        default: Lorem
+        type: string
+      update_at:
+        type: string
+    type: object
+  models.CreateArticleModel:
+    properties:
+      author:
+        $ref: '#/definitions/models.Person'
+      body:
+        type: string
+      title:
+        default: Lorem
+        type: string
+    type: object
+  models.DefaultResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  models.Person:
+    properties:
+      firstname:
+        example: John
+        type: string
+      lastname:
+        example: Doe
+        type: string
+    type: object
+host: localhost:7070
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.1"
+paths:
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: Get Article List based on query params
+      operationId: get-article-list
+      parameters:
+      - description: input search text
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.DefaultResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Article'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+      summary: Get Article List
+      tags:
+      - article
+    post:
+      consumes:
+      - application/json
+      description: Create an article based on given body
+      operationId: create-article
+      parameters:
+      - description: article body
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateArticleModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "400":
+          description: Bad Request Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "500":
+          description: Internal Server Error Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+      summary: Create an article
+      tags:
+      - article
+swagger: "2.0"

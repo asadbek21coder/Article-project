@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Content struct {
-	Title string `json:"title"`
+	Title string `json:"title" default:"Lorem"`
 	Body  string `json:"body"`
 }
 
@@ -17,7 +17,7 @@ type Article struct {
 
 type CreateArticleModel struct {
 	Content
-	Author Person `json:"author" db:"a"`
+	Author Person `json:"author"`
 }
 
 type UpdateArticleModel struct {

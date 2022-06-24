@@ -2,8 +2,8 @@ basePath: /api/v1
 definitions:
   models.Article:
     properties:
-      author:
-        $ref: '#/definitions/models.Person'
+      author_id:
+        type: string
       body:
         type: string
       created_at:
@@ -16,14 +16,56 @@ definitions:
       update_at:
         type: string
     type: object
+  models.ArticleList:
+    properties:
+      articles:
+        items:
+          $ref: '#/definitions/models.Article'
+        type: array
+      count:
+        type: integer
+    type: object
+  models.Author:
+    properties:
+      created_at:
+        type: string
+      firstname:
+        example: John
+        type: string
+      id:
+        type: string
+      lastname:
+        example: Doe
+        type: string
+      update_at:
+        type: string
+    type: object
+  models.AuthorList:
+    properties:
+      authors:
+        items:
+          $ref: '#/definitions/models.Author'
+        type: array
+      count:
+        type: integer
+    type: object
   models.CreateArticleModel:
     properties:
-      author:
-        $ref: '#/definitions/models.Person'
+      author_id:
+        type: string
       body:
         type: string
       title:
         default: Lorem
+        type: string
+    type: object
+  models.CreateAuthorModel:
+    properties:
+      firstname:
+        example: John
+        type: string
+      lastname:
+        example: Doe
         type: string
     type: object
   models.DefaultResponse:
@@ -32,15 +74,6 @@ definitions:
       error:
         type: string
       message:
-        type: string
-    type: object
-  models.Person:
-    properties:
-      firstname:
-        example: John
-        type: string
-      lastname:
-        example: Doe
         type: string
     type: object
 host: localhost:7070
@@ -68,6 +101,14 @@ paths:
         in: query
         name: search
         type: string
+      - description: offset
+        in: query
+        name: offset
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
       produces:
       - application/json
       responses:
@@ -79,7 +120,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Article'
+                    $ref: '#/definitions/models.ArticleList'
                   type: array
               type: object
         "500":
@@ -119,4 +160,74 @@ paths:
       summary: Create an article
       tags:
       - article
+  /authors:
+    get:
+      consumes:
+      - application/json
+      description: Get Author List based on query params
+      operationId: get-author-list
+      parameters:
+      - description: input search text
+        in: query
+        name: search
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.DefaultResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.AuthorList'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+      summary: Get Author List
+      tags:
+      - author
+    post:
+      consumes:
+      - application/json
+      description: Create an author based on given body
+      operationId: create-author
+      parameters:
+      - description: author body
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateAuthorModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "400":
+          description: Bad Request Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "500":
+          description: Internal Server Error Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+      summary: Create an author
+      tags:
+      - author
 swagger: "2.0"

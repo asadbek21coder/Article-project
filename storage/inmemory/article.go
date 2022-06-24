@@ -49,7 +49,7 @@ func (r articleRepoImpl) UpdateArticle(entity models.Article) error {
 
 	now := time.Now()
 	val.Content = entity.Content
-	val.Author = entity.Author
+	val.AuthorID = entity.AuthorID
 	val.UpdateAt = &now
 
 	r.db[val.ID] = val

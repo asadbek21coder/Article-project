@@ -45,6 +45,18 @@ const docTemplate = `{
                         "description": "input search text",
                         "name": "search",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -61,7 +73,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/models.Article"
+                                                "$ref": "#/definitions/models.ArticleList"
                                             }
                                         }
                                     }
@@ -122,14 +134,124 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/authors": {
+            "get": {
+                "description": "Get Author List based on query params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "author"
+                ],
+                "summary": "Get Author List",
+                "operationId": "get-author-list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "input search text",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.DefaultResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.AuthorList"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create an author based on given body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "author"
+                ],
+                "summary": "Create an author",
+                "operationId": "create-author",
+                "parameters": [
+                    {
+                        "description": "author body",
+                        "name": "author",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateAuthorModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
         "models.Article": {
             "type": "object",
             "properties": {
-                "author": {
-                    "$ref": "#/definitions/models.Person"
+                "author_id": {
+                    "type": "string"
                 },
                 "body": {
                     "type": "string"
@@ -149,11 +271,61 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ArticleList": {
+            "type": "object",
+            "properties": {
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Article"
+                    }
+                },
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Author": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string",
+                    "example": "John"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string",
+                    "example": "Doe"
+                },
+                "update_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AuthorList": {
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Author"
+                    }
+                },
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.CreateArticleModel": {
             "type": "object",
             "properties": {
-                "author": {
-                    "$ref": "#/definitions/models.Person"
+                "author_id": {
+                    "type": "string"
                 },
                 "body": {
                     "type": "string"
@@ -161,6 +333,19 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "default": "Lorem"
+                }
+            }
+        },
+        "models.CreateAuthorModel": {
+            "type": "object",
+            "properties": {
+                "firstname": {
+                    "type": "string",
+                    "example": "John"
+                },
+                "lastname": {
+                    "type": "string",
+                    "example": "Doe"
                 }
             }
         },
@@ -173,19 +358,6 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
-                }
-            }
-        },
-        "models.Person": {
-            "type": "object",
-            "properties": {
-                "firstname": {
-                    "type": "string",
-                    "example": "John"
-                },
-                "lastname": {
-                    "type": "string",
-                    "example": "Doe"
                 }
             }
         }

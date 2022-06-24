@@ -10,13 +10,13 @@ import (
 	"github.com/saidamir98/project6/models"
 )
 
-type ArticleRepoImpl struct {
+type AuthorRepoImpl struct {
 	db *sqlx.DB
 }
 
-var ArticleRepo = ArticleRepoImpl{}
+var AuthorRepo = AuthorRepoImpl{}
 
-func (r ArticleRepoImpl) CloseDB() error {
+func (r AuthorRepoImpl) CloseDB() error {
 	return r.db.Close()
 }
 
@@ -26,15 +26,15 @@ func init() {
 		log.Fatalln(err)
 	}
 
-	ArticleRepo.db = db
+	AuthorRepo.db = db
 }
 
-func (r ArticleRepoImpl) CreateArticle(entity models.CreateArticleModel) error {
+func (r AuthorRepoImpl) CreateAuthor(entity models.CreateAuthorModel) error {
 	id := uuid.New()
 
-	createArticleQuery := `INSERT INTO "article" ("id", "title", "body", "author_id") VALUES ($1, $2, $3, $4)`
+	createAuthorQuery := `INSERT INTO "author" ("id", "firstname", "lastname") VALUES ($1, $2, $3)`
 
-	result, err := r.db.Exec(createArticleQuery, id, entity.Title, entity.Body, entity.AuthorID)
+	result, err := r.db.Exec(createAuthorQuery, id, entity.Firstname, entity.Lastname)
 	if err != nil {
 		return err
 	}
@@ -44,18 +44,17 @@ func (r ArticleRepoImpl) CreateArticle(entity models.CreateArticleModel) error {
 	return nil
 }
 
-func (r ArticleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp models.ArticleList, err error) {
-	resp.Articles = []models.Article{}
+func (r AuthorRepoImpl) GetAuthorList(queryParams models.QueryParams) (resp models.AuthorList, err error) {
+	resp.Authors = []models.Author{}
 
 	params := make(map[string]interface{})
 	query := `SELECT
 		id,
-		title,
-		body,
-		author_id,
+		firstname,
+		lastname,
 		created_at,
 		updated_at
-		FROM article
+		FROM author
 		`
 	filter := " WHERE true"
 	offset := " OFFSET 0"
@@ -63,7 +62,7 @@ func (r ArticleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp mo
 
 	if len(queryParams.Search) > 0 {
 		params["search"] = queryParams.Search
-		filter += " AND ((title ILIKE '%' || :search || '%') OR (body ILIKE '%' || :search || '%'))"
+		filter += " AND ((firstname ILIKE '%' || :search || '%') OR (lastname ILIKE '%' || :search || '%'))"
 	}
 
 	if queryParams.Offset > 0 {
@@ -76,7 +75,7 @@ func (r ArticleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp mo
 		limit = " LIMIT :limit"
 	}
 
-	cQ := "SELECT count(1) FROM article" + filter
+	cQ := "SELECT count(1) FROM author" + filter
 	row, err := r.db.NamedQuery(cQ, params)
 	if err != nil {
 		return resp, err
@@ -99,13 +98,12 @@ func (r ArticleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp mo
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var e models.Article
+		var e models.Author
 
 		err = rows.Scan(
 			&e.ID,
-			&e.Title,
-			&e.Body,
-			&e.AuthorID,
+			&e.Firstname,
+			&e.Lastname,
 			&e.CreatedAt,
 			&e.UpdateAt,
 		)
@@ -114,13 +112,13 @@ func (r ArticleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp mo
 			return resp, err
 		}
 
-		resp.Articles = append(resp.Articles, e)
+		resp.Authors = append(resp.Authors, e)
 	}
 
 	return resp, nil
 }
 
-func (r ArticleRepoImpl) UpdateArticle(entity models.Article) error {
+func (r AuthorRepoImpl) UpdateAuthor(entity models.Author) error {
 	// val, ok := r.db[entity.ID]
 	// if !ok {
 	// 	return errors.New("not found")

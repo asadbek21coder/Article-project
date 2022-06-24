@@ -41,6 +41,15 @@ func main() {
 		articleRouter.DELETE("/:id", handlers.DeleteArticle)
 	}
 
+	authorRouter := v1.Group("authors")
+	{
+		authorRouter.GET("/", handlers.GetAuthorList)
+		authorRouter.GET("/:id", handlers.GetAuthorByID)
+		authorRouter.POST("/", handlers.CreateAuthor)
+		authorRouter.PUT("/", handlers.UpdateAuthor)
+		authorRouter.DELETE("/:id", handlers.DeleteAuthor)
+	}
+
 	r.StaticFS("/static", gin.Dir("static", false))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

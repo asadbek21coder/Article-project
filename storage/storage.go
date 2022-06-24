@@ -1,13 +1,15 @@
 package storage
 
-import (
-	"fmt"
+import "github.com/saidamir98/project6/storage/postgres"
 
-	"github.com/saidamir98/project6/storage/postgres"
-)
+type StoreImpl struct {
+	Article postgres.ArticleRepoImpl
+	Author  postgres.AuthorRepoImpl
+}
 
-var Store = postgres.ArticleRepo
+var Store StoreImpl
 
 func init() {
-	fmt.Println("Storage init")
+	Store.Article = postgres.ArticleRepo
+	Store.Author = postgres.AuthorRepo
 }

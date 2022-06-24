@@ -8,20 +8,20 @@ import (
 	"github.com/saidamir98/project6/storage"
 )
 
-// ShowAccount GetArticleList
-// @ID           get-article-list
-// @Summary      Get Article List
-// @Description  Get Article List based on query params
-// @Tags         article
+// ShowAccount GetAuthorList
+// @ID           get-author-list
+// @Summary      Get Author List
+// @Description  Get Author List based on query params
+// @Tags         author
 // @Accept       json
 // @Produce      json
 // @Param        search  query     string                                         false  "input search text"
 // @Param        offset  query     string                                         false  "offset"
 // @Param        limit   query     string                                         false  "limit"
-// @Success      200     {object}  models.DefaultResponse{data=[]models.ArticleList}  "Success Response"
+// @Success      200     {object}  models.DefaultResponse{data=[]models.AuthorList}  "Success Response"
 // @Success      500     {object}  models.DefaultResponse                         "Internal Server Error Response"
-// @Router       /articles [GET]
-func GetArticleList(c *gin.Context) {
+// @Router       /authors [GET]
+func GetAuthorList(c *gin.Context) {
 	search := c.Query("search")
 
 	offset, err := parseOffsetQueryParam(c)
@@ -36,7 +36,7 @@ func GetArticleList(c *gin.Context) {
 		return
 	}
 
-	resp, err := storage.Store.Article.GetArticleList(models.QueryParams{
+	resp, err := storage.Store.Author.GetAuthorList(models.QueryParams{
 		Search: search,
 		Offset: offset,
 		Limit:  limit,
@@ -48,42 +48,41 @@ func GetArticleList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "GetArticleList",
+		"message": "GetAuthorList",
 		"data":    resp,
 	})
 }
 
-func GetArticleByID(c *gin.Context) {
+func GetAuthorByID(c *gin.Context) {
 	id := c.Param("id")
-	// TODO - get an article by ID
+	// TODO - get an author by ID
 	c.JSON(http.StatusOK, gin.H{
-		"message": "GetArticleByID",
+		"message": "GetAuthorByID",
 		"id":      id,
 	})
 }
 
-// ShowAccount CreateArticle
-// @ID           create-article
-// @Summary      Create an article
-// @Description  Create an article based on given body
-// @Tags         article
+// ShowAccount CreateAuthor
+// @ID           create-author
+// @Summary      Create an author
+// @Description  Create an author based on given body
+// @Tags         author
 // @Accept       json
 // @Produce      json
-// @Param        article  body      models.CreateArticleModel  true  "article body"
+// @Param        author  body      models.CreateAuthorModel  true  "author body"
 // @Success      201      {object}  models.DefaultResponse     "Success Response"
 // @Success      400      {object}  models.DefaultResponse     "Bad Request Response"
 // @Success      500      {object}  models.DefaultResponse     "Internal Server Error Response"
-// @Router       /articles [POST]
-func CreateArticle(c *gin.Context) {
-	var data models.CreateArticleModel
+// @Router       /authors [POST]
+func CreateAuthor(c *gin.Context) {
+	var data models.CreateAuthorModel
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := storage.Store.Article.CreateArticle(models.CreateArticleModel{
-		Content:  data.Content,
-		AuthorID: data.AuthorID,
+	err := storage.Store.Author.CreateAuthor(models.CreateAuthorModel{
+		Person: data.Person,
 	})
 
 	if err != nil {
@@ -92,19 +91,19 @@ func CreateArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "Article has been created",
+		"message": "Author has been created",
 		"data":    nil,
 	})
 }
 
-func UpdateArticle(c *gin.Context) {
-	var data models.Article
+func UpdateAuthor(c *gin.Context) {
+	var data models.Author
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := storage.Store.Article.UpdateArticle(data)
+	err := storage.Store.Author.UpdateAuthor(data)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -112,17 +111,17 @@ func UpdateArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Article has been updated",
+		"message": "Author has been updated",
 	})
 }
 
-func DeleteArticle(c *gin.Context) {
+func DeleteAuthor(c *gin.Context) {
 	id := c.Param("id")
 
-	// TODO - delete an article by ID
+	// TODO - delete an author by ID
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "DeleteArticle",
+		"message": "DeleteAuthor",
 		"id":      id,
 	})
 }

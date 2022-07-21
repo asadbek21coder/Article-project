@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/saidamir98/project6/models"
+	"project6/models"
 )
 
 type articleRepoImpl struct {

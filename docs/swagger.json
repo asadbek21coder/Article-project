@@ -2,7 +2,6 @@
     "swagger": "2.0",
     "info": {
         "description": "This is a sample server celler server.",
-        "title": "Swagger Example API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",
@@ -12,10 +11,8 @@
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "1.1"
+        }
     },
-    "host": "localhost:7070",
     "basePath": "/api/v1",
     "paths": {
         "/articles": {
@@ -345,7 +342,9 @@
         "models.DefaultResponse": {
             "type": "object",
             "properties": {
-                "data": {},
+                "data": {
+                    "type": "object"
+                },
                 "error": {
                     "type": "string"
                 },

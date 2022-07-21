@@ -2,34 +2,19 @@ package postgres
 
 import (
 	"fmt"
-	"log"
+
+	"project6/models"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"github.com/saidamir98/project6/models"
 )
 
-type AuthorRepoImpl struct {
+type authorRepoImpl struct {
 	db *sqlx.DB
 }
 
-var AuthorRepo = AuthorRepoImpl{}
-
-func (r AuthorRepoImpl) CloseDB() error {
-	return r.db.Close()
-}
-
-func init() {
-	db, err := sqlx.Connect("postgres", "user=postgres dbname=bootcamp password=qwerty123 sslmode=disable")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	AuthorRepo.db = db
-}
-
-func (r AuthorRepoImpl) CreateAuthor(entity models.CreateAuthorModel) error {
+func (r authorRepoImpl) CreateAuthor(entity models.CreateAuthorModel) error {
 	id := uuid.New()
 
 	createAuthorQuery := `INSERT INTO "author" ("id", "firstname", "lastname") VALUES ($1, $2, $3)`
@@ -44,7 +29,7 @@ func (r AuthorRepoImpl) CreateAuthor(entity models.CreateAuthorModel) error {
 	return nil
 }
 
-func (r AuthorRepoImpl) GetAuthorList(queryParams models.QueryParams) (resp models.AuthorList, err error) {
+func (r authorRepoImpl) GetAuthorList(queryParams models.QueryParams) (resp models.AuthorList, err error) {
 	resp.Authors = []models.Author{}
 
 	params := make(map[string]interface{})
@@ -118,7 +103,7 @@ func (r AuthorRepoImpl) GetAuthorList(queryParams models.QueryParams) (resp mode
 	return resp, nil
 }
 
-func (r AuthorRepoImpl) UpdateAuthor(entity models.Author) error {
+func (r authorRepoImpl) UpdateAuthor(entity models.Author) error {
 	// val, ok := r.db[entity.ID]
 	// if !ok {
 	// 	return errors.New("not found")

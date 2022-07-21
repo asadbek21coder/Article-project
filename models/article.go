@@ -15,6 +15,14 @@ type Article struct {
 	UpdateAt  *time.Time `json:"update_at"`
 }
 
+type ArticleFullJoinedModel struct {
+	ID string `json:"id"`
+	Content
+	Author    Author     `json:"author"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdateAt  *time.Time `json:"update_at"`
+}
+
 type CreateArticleModel struct {
 	Content
 	AuthorID string `json:"author_id"`

@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"project6/models"
+
 	"github.com/gin-gonic/gin"
-	"github.com/saidamir98/project6/models"
-	"github.com/saidamir98/project6/storage"
 )
 
 // ShowAccount GetArticleList
@@ -15,28 +15,28 @@ import (
 // @Tags         article
 // @Accept       json
 // @Produce      json
-// @Param        search  query     string                                         false  "input search text"
-// @Param        offset  query     string                                         false  "offset"
-// @Param        limit   query     string                                         false  "limit"
+// @Param        search  query     string                                             false  "input search text"
+// @Param        offset  query     string                                             false  "offset"
+// @Param        limit   query     string                                             false  "limit"
 // @Success      200     {object}  models.DefaultResponse{data=[]models.ArticleList}  "Success Response"
-// @Success      500     {object}  models.DefaultResponse                         "Internal Server Error Response"
+// @Success      500     {object}  models.DefaultResponse                             "Internal Server Error Response"
 // @Router       /articles [GET]
-func GetArticleList(c *gin.Context) {
+func (h *HandlerImpl) GetArticleList(c *gin.Context) {
 	search := c.Query("search")
 
-	offset, err := parseOffsetQueryParam(c)
+	offset, err := h.parseOffsetQueryParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	limit, err := parseLimitQueryParam(c)
+	limit, err := h.parseLimitQueryParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	resp, err := storage.Store.Article.GetArticleList(models.QueryParams{
+	resp, err := h.strg.Article().GetArticleList(models.QueryParams{
 		Search: search,
 		Offset: offset,
 		Limit:  limit,
@@ -53,7 +53,7 @@ func GetArticleList(c *gin.Context) {
 	})
 }
 
-func GetArticleByID(c *gin.Context) {
+func (h *HandlerImpl) GetArticleByID(c *gin.Context) {
 	id := c.Param("id")
 	// TODO - get an article by ID
 	c.JSON(http.StatusOK, gin.H{
@@ -74,14 +74,14 @@ func GetArticleByID(c *gin.Context) {
 // @Success      400      {object}  models.DefaultResponse     "Bad Request Response"
 // @Success      500      {object}  models.DefaultResponse     "Internal Server Error Response"
 // @Router       /articles [POST]
-func CreateArticle(c *gin.Context) {
+func (h *HandlerImpl) CreateArticle(c *gin.Context) {
 	var data models.CreateArticleModel
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := storage.Store.Article.CreateArticle(models.CreateArticleModel{
+	err := h.strg.Article().CreateArticle(models.CreateArticleModel{
 		Content:  data.Content,
 		AuthorID: data.AuthorID,
 	})
@@ -97,14 +97,14 @@ func CreateArticle(c *gin.Context) {
 	})
 }
 
-func UpdateArticle(c *gin.Context) {
+func (h *HandlerImpl) UpdateArticle(c *gin.Context) {
 	var data models.Article
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := storage.Store.Article.UpdateArticle(data)
+	err := h.strg.Article().UpdateArticle(data)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -116,7 +116,7 @@ func UpdateArticle(c *gin.Context) {
 	})
 }
 
-func DeleteArticle(c *gin.Context) {
+func (h *HandlerImpl) DeleteArticle(c *gin.Context) {
 	id := c.Param("id")
 
 	// TODO - delete an article by ID

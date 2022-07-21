@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"project6/models"
+
 	"github.com/gin-gonic/gin"
-	"github.com/saidamir98/project6/models"
-	"github.com/saidamir98/project6/storage"
 )
 
 // ShowAccount GetAuthorList
@@ -15,28 +15,28 @@ import (
 // @Tags         author
 // @Accept       json
 // @Produce      json
-// @Param        search  query     string                                         false  "input search text"
-// @Param        offset  query     string                                         false  "offset"
-// @Param        limit   query     string                                         false  "limit"
+// @Param        search  query     string                                            false  "input search text"
+// @Param        offset  query     string                                            false  "offset"
+// @Param        limit   query     string                                            false  "limit"
 // @Success      200     {object}  models.DefaultResponse{data=[]models.AuthorList}  "Success Response"
-// @Success      500     {object}  models.DefaultResponse                         "Internal Server Error Response"
+// @Success      500     {object}  models.DefaultResponse                            "Internal Server Error Response"
 // @Router       /authors [GET]
-func GetAuthorList(c *gin.Context) {
+func (h *HandlerImpl) GetAuthorList(c *gin.Context) {
 	search := c.Query("search")
 
-	offset, err := parseOffsetQueryParam(c)
+	offset, err := h.parseOffsetQueryParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	limit, err := parseLimitQueryParam(c)
+	limit, err := h.parseLimitQueryParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	resp, err := storage.Store.Author.GetAuthorList(models.QueryParams{
+	resp, err := h.strg.Author().GetAuthorList(models.QueryParams{
 		Search: search,
 		Offset: offset,
 		Limit:  limit,
@@ -53,7 +53,7 @@ func GetAuthorList(c *gin.Context) {
 	})
 }
 
-func GetAuthorByID(c *gin.Context) {
+func (h *HandlerImpl) GetAuthorByID(c *gin.Context) {
 	id := c.Param("id")
 	// TODO - get an author by ID
 	c.JSON(http.StatusOK, gin.H{
@@ -70,18 +70,18 @@ func GetAuthorByID(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        author  body      models.CreateAuthorModel  true  "author body"
-// @Success      201      {object}  models.DefaultResponse     "Success Response"
-// @Success      400      {object}  models.DefaultResponse     "Bad Request Response"
-// @Success      500      {object}  models.DefaultResponse     "Internal Server Error Response"
+// @Success      201     {object}  models.DefaultResponse    "Success Response"
+// @Success      400     {object}  models.DefaultResponse    "Bad Request Response"
+// @Success      500     {object}  models.DefaultResponse    "Internal Server Error Response"
 // @Router       /authors [POST]
-func CreateAuthor(c *gin.Context) {
+func (h *HandlerImpl) CreateAuthor(c *gin.Context) {
 	var data models.CreateAuthorModel
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := storage.Store.Author.CreateAuthor(models.CreateAuthorModel{
+	err := h.strg.Author().CreateAuthor(models.CreateAuthorModel{
 		Person: data.Person,
 	})
 
@@ -96,14 +96,14 @@ func CreateAuthor(c *gin.Context) {
 	})
 }
 
-func UpdateAuthor(c *gin.Context) {
+func (h *HandlerImpl) UpdateAuthor(c *gin.Context) {
 	var data models.Author
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := storage.Store.Author.UpdateAuthor(data)
+	err := h.strg.Author().UpdateAuthor(data)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -115,7 +115,7 @@ func UpdateAuthor(c *gin.Context) {
 	})
 }
 
-func DeleteAuthor(c *gin.Context) {
+func (h *HandlerImpl) DeleteAuthor(c *gin.Context) {
 	id := c.Param("id")
 
 	// TODO - delete an author by ID

@@ -9,6 +9,14 @@ type Author struct {
 	UpdateAt  *time.Time `json:"update_at"`
 }
 
+type AuthorGetByIDModel struct {
+	ID string `json:"id"`
+	Person
+	Articles  []Article  `json:"articles"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdateAt  *time.Time `json:"update_at"`
+}
+
 type CreateAuthorModel struct {
 	Person
 }

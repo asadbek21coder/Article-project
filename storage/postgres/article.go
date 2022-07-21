@@ -2,34 +2,19 @@ package postgres
 
 import (
 	"fmt"
-	"log"
+
+	"project6/models"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"github.com/saidamir98/project6/models"
 )
 
-type ArticleRepoImpl struct {
+type articleRepoImpl struct {
 	db *sqlx.DB
 }
 
-var ArticleRepo = ArticleRepoImpl{}
-
-func (r ArticleRepoImpl) CloseDB() error {
-	return r.db.Close()
-}
-
-func init() {
-	db, err := sqlx.Connect("postgres", "user=postgres dbname=bootcamp password=qwerty123 sslmode=disable")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	ArticleRepo.db = db
-}
-
-func (r ArticleRepoImpl) CreateArticle(entity models.CreateArticleModel) error {
+func (r articleRepoImpl) CreateArticle(entity models.CreateArticleModel) error {
 	id := uuid.New()
 
 	createArticleQuery := `INSERT INTO "article" ("id", "title", "body", "author_id") VALUES ($1, $2, $3, $4)`
@@ -44,7 +29,7 @@ func (r ArticleRepoImpl) CreateArticle(entity models.CreateArticleModel) error {
 	return nil
 }
 
-func (r ArticleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp models.ArticleList, err error) {
+func (r articleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp models.ArticleList, err error) {
 	resp.Articles = []models.Article{}
 
 	params := make(map[string]interface{})
@@ -120,18 +105,17 @@ func (r ArticleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp mo
 	return resp, nil
 }
 
-func (r ArticleRepoImpl) UpdateArticle(entity models.Article) error {
-	// val, ok := r.db[entity.ID]
-	// if !ok {
-	// 	return errors.New("not found")
-	// }
+func (r articleRepoImpl) GetArticleByID(id string) (resp models.ArticleFullJoinedModel, err error) {
+	// TODO
+	return
+}
 
-	// now := time.Now()
-	// val.Content = entity.Content
-	// val.Author = entity.Author
-	// val.UpdateAt = &now
+func (r articleRepoImpl) UpdateArticle(entity models.Article) error {
+	// TODO
+	return nil
+}
 
-	// r.db[val.ID] = val
-
+func (r articleRepoImpl) DeleteArticle(id string) error {
+	// TODO
 	return nil
 }

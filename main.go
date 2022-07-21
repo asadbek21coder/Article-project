@@ -1,17 +1,21 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/saidamir98/project6/handlers"
-	"github.com/saidamir98/project6/storage/postgres"
+	"fmt"
 
-	_ "github.com/saidamir98/project6/docs"
+	"project6/config"
+	"project6/docs"
+	"project6/handlers"
+	"project6/storage/postgres"
+
+	"github.com/gin-gonic/gin"
+
+	_ "project6/docs"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title           Swagger Example API
-// @version         1.1
 // @description     This is a sample server celler server.
 // @termsOfService  http://swagger.io/terms/
 // @contact.name    API Support
@@ -19,40 +23,66 @@ import (
 // @contact.email   support@swagger.io
 // @license.name    Apache 2.0
 // @license.url     http://www.apache.org/licenses/LICENSE-2.0.html
-// @host            localhost:7070
 // @BasePath        /api/v1
 func main() {
-	defer postgres.ArticleRepo.CloseDB()
+
+	cfg := config.Load()
+
+	fmt.Printf("%#+v\n", cfg)
+
+	strgPG := postgres.NewPostgres(
+		fmt.Sprintf("user=%s dbname=%s password=%s sslmode=disable",
+			cfg.PostgresUser,
+			cfg.PostgresDatabase,
+			cfg.PostgresPassword,
+		),
+	)
+	defer strgPG.CloseDB()
+
+	h := handlers.NewHandler(strgPG, cfg)
+
+	switch cfg.Environment {
+	case "dev":
+		gin.SetMode(gin.DebugMode)
+	case "test":
+		gin.SetMode(gin.TestMode)
+	default:
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
 
-	r.GET("/ping", handlers.Ping)
+	docs.SwaggerInfo.Title = cfg.ProjectName
+	docs.SwaggerInfo.Version = cfg.Version
+	docs.SwaggerInfo.Host = cfg.ServiceHost + cfg.HTTPPort
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
+	r.GET("/ping", h.Ping)
 
 	api := r.Group("api")
 	v1 := api.Group("v1")
-
 	articleRouter := v1.Group("articles")
 	{
-		articleRouter.GET("/", handlers.GetArticleList)
-		articleRouter.GET("/:id", handlers.GetArticleByID)
-		articleRouter.POST("/", handlers.CreateArticle)
-		articleRouter.PUT("/", handlers.UpdateArticle)
-		articleRouter.DELETE("/:id", handlers.DeleteArticle)
+		articleRouter.GET("/", h.GetArticleList)
+		articleRouter.GET("/:id", h.GetArticleByID)
+		articleRouter.POST("/", h.CreateArticle)
+		articleRouter.PUT("/", h.UpdateArticle)
+		articleRouter.DELETE("/:id", h.DeleteArticle)
 	}
 
 	authorRouter := v1.Group("authors")
 	{
-		authorRouter.GET("/", handlers.GetAuthorList)
-		authorRouter.GET("/:id", handlers.GetAuthorByID)
-		authorRouter.POST("/", handlers.CreateAuthor)
-		authorRouter.PUT("/", handlers.UpdateAuthor)
-		authorRouter.DELETE("/:id", handlers.DeleteAuthor)
+		authorRouter.GET("/", h.GetAuthorList)
+		authorRouter.GET("/:id", h.GetAuthorByID)
+		authorRouter.POST("/", h.CreateAuthor)
+		authorRouter.PUT("/", h.UpdateAuthor)
+		authorRouter.DELETE("/:id", h.DeleteAuthor)
 	}
 
 	r.StaticFS("/static", gin.Dir("static", false))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.Run(":7070")
+	r.Run(cfg.HTTPPort)
 }

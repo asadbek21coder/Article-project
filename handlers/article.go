@@ -53,12 +53,28 @@ func (h *HandlerImpl) GetArticleList(c *gin.Context) {
 	})
 }
 
+// ShowAccount GetArticleByID
+// @ID           get-article_by_id
+// @Summary      Get an article
+// @Description  Delete an article based on given id
+// @Tags         article
+// @Accept       json
+// @Produce      json
+// @Param id path string true "id"
+// @Success      201      {object}  models.DefaultResponse     "Success Response"
+// @Success      400      {object}  models.DefaultResponse     "Bad Request Response"
+// @Success      500      {object}  models.DefaultResponse     "Internal Server Error Response"
+// @Router       /articles/{id} [GET]
 func (h *HandlerImpl) GetArticleByID(c *gin.Context) {
 	id := c.Param("id")
-	// TODO - get an article by ID
+	resp, err := h.strg.Article().GetArticleByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "GetArticleByID",
-		"id":      id,
+		"id":      resp,
 	})
 }
 
@@ -97,8 +113,20 @@ func (h *HandlerImpl) CreateArticle(c *gin.Context) {
 	})
 }
 
+// ShowAccount UpdateArticle
+// @ID           update-article
+// @Summary      Update an article
+// @Description  Ureate an article
+// @Tags         article
+// @Accept       json
+// @Produce      json
+// @Param        article  body      models.UpdateArticleModel  true       "article body"
+// @Success      201      {object}  models.DefaultResponse     "Success Response"
+// @Success      400      {object}  models.DefaultResponse     "Bad Request Response"
+// @Success      500      {object}  models.DefaultResponse     "Internal Server Error Response"
+// @Router       /articles [PUT]
 func (h *HandlerImpl) UpdateArticle(c *gin.Context) {
-	var data models.Article
+	var data models.UpdateArticleModel
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -116,10 +144,27 @@ func (h *HandlerImpl) UpdateArticle(c *gin.Context) {
 	})
 }
 
+// ShowAccount DeleteArticle
+// @ID           delete-article
+// @Summary      Delete an article
+// @Description  Delete an article based on given id
+// @Tags         article
+// @Accept       json
+// @Produce      json
+// @Param id path string true "id"
+// @Success      201      {object}  models.DefaultResponse     "Success Response"
+// @Success      400      {object}  models.DefaultResponse     "Bad Request Response"
+// @Success      500      {object}  models.DefaultResponse     "Internal Server Error Response"
+// @Router       /articles/{id} [DELETE]
 func (h *HandlerImpl) DeleteArticle(c *gin.Context) {
 	id := c.Param("id")
 
-	// TODO - delete an article by ID
+	err := h.strg.Article().DeleteArticle(id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "DeleteArticle",

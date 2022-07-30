@@ -12,7 +12,7 @@ type ArticleRepoI interface {
 	CreateArticle(entity models.CreateArticleModel) error
 	GetArticleList(queryParams models.QueryParams) (resp models.ArticleList, err error)
 	GetArticleByID(id string) (resp models.ArticleFullJoinedModel, err error)
-	UpdateArticle(entity models.Article) error
+	UpdateArticle(entity models.UpdateArticleModel) error
 	DeleteArticle(id string) error
 }
 

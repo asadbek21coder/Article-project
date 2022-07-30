@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"fmt"
-
 	"project6/models"
 
 	"github.com/google/uuid"
@@ -19,12 +18,10 @@ func (r articleRepoImpl) CreateArticle(entity models.CreateArticleModel) error {
 
 	createArticleQuery := `INSERT INTO "article" ("id", "title", "body", "author_id") VALUES ($1, $2, $3, $4)`
 
-	result, err := r.db.Exec(createArticleQuery, id, entity.Title, entity.Body, entity.AuthorID)
+	_, err := r.db.Exec(createArticleQuery, id, entity.Title, entity.Body, entity.AuthorID)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(result.RowsAffected())
 
 	return nil
 }
@@ -34,13 +31,13 @@ func (r articleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp mo
 
 	params := make(map[string]interface{})
 	query := `SELECT
-		id,
-		title,
-		body,
-		author_id,
-		created_at,
-		updated_at
-		FROM article
+		ar.id,
+		ar.title,
+		ar.body,
+		ar.author_id,
+		ar.created_at,
+		ar.updated_at
+		FROM article as ar
 		`
 	filter := " WHERE true"
 	offset := " OFFSET 0"
@@ -106,16 +103,89 @@ func (r articleRepoImpl) GetArticleList(queryParams models.QueryParams) (resp mo
 }
 
 func (r articleRepoImpl) GetArticleByID(id string) (resp models.ArticleFullJoinedModel, err error) {
-	// TODO
-	return
+	query := `SELECT
+					ar.id,
+					ar.title,
+					ar.body,
+					at.id as author_id,
+					at.firstname,
+					at.lastname,
+					at.created_at as author_created_at,
+					at.updated_at as author_updated_at,		
+					ar.created_at,
+					ar.updated_at
+				FROM
+					article as ar
+				LEFT JOIN 
+					author as at
+				ON 
+					ar.author_id = at.id
+	`
+
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return resp, err
+	}
+	fmt.Println((rows))
+	for rows.Next() {
+		var article models.Article
+		var author models.Author
+		err = rows.Scan(
+			&article.ID,
+			&article.Title,
+			&article.Body,
+			&article.AuthorID,
+			&author.Firstname,
+			&author.Lastname,
+			&author.CreatedAt,
+			&author.UpdateAt,
+			&article.CreatedAt,
+			&article.UpdateAt,
+		)
+
+		resp.ID = article.ID
+		resp.Title = article.Title
+		resp.Body = article.Body
+		resp.Author.ID = article.AuthorID
+		resp.Author.Firstname = author.Firstname
+		resp.Author.Lastname = author.Lastname
+		resp.Author.CreatedAt = author.CreatedAt
+		resp.Author.UpdateAt = author.UpdateAt
+		resp.CreatedAt = article.CreatedAt
+		resp.UpdateAt = article.UpdateAt
+
+	}
+
+	return resp, nil
 }
 
-func (r articleRepoImpl) UpdateArticle(entity models.Article) error {
-	// TODO
+func (r articleRepoImpl) UpdateArticle(entity models.UpdateArticleModel) error {
+	query := `
+	UPDATE
+		article
+	SET
+		title=$1,
+		body=$2,
+		author_id=$3
+	WHERE
+		id=$4
+	`
+	_, err := r.db.Exec(query, entity.Title, entity.Body, entity.AuthorID, entity.ID)
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (r articleRepoImpl) DeleteArticle(id string) error {
-	// TODO
+
+	query := `DELETE from article where id=$1`
+
+	_, err := r.db.Exec(query, id)
+
+	if err != nil {
+		return err
+	}
 	return nil
 }

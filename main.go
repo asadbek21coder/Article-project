@@ -58,8 +58,6 @@ func main() {
 	docs.SwaggerInfo.Host = cfg.ServiceHost + cfg.HTTPPort
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
-	r.GET("/ping", h.Ping)
-
 	api := r.Group("api")
 	v1 := api.Group("v1")
 	articleRouter := v1.Group("articles")

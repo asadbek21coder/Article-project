@@ -74,7 +74,7 @@ func (h *HandlerImpl) GetArticleByID(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "GetArticleByID",
-		"id":      resp,
+		"Article": resp,
 	})
 }
 

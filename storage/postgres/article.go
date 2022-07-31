@@ -3,6 +3,7 @@ package postgres
 import (
 	"fmt"
 	"project6/models"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -166,11 +167,12 @@ func (r articleRepoImpl) UpdateArticle(entity models.UpdateArticleModel) error {
 	SET
 		title=$1,
 		body=$2,
-		author_id=$3
+		author_id=$3,
+		updated_at=$4
 	WHERE
-		id=$4
+		id=$5
 	`
-	_, err := r.db.Exec(query, entity.Title, entity.Body, entity.AuthorID, entity.ID)
+	_, err := r.db.Exec(query, entity.Title, entity.Body, entity.AuthorID, time.Now(), entity.ID)
 
 	if err != nil {
 		return err

@@ -47,10 +47,10 @@ func (r articleRepoImpl) UpdateArticle(entity models.Article) error {
 		return errors.New("not found")
 	}
 
-	now := time.Now()
-	val.Content = entity.Content
-	val.AuthorID = entity.AuthorID
-	val.UpdateAt = &now
+	// now := time.Now()
+	// val.Content = entity.Content
+	// val.AuthorID = entity.AuthorID
+	// val.UpdateAt = &now
 
 	r.db[val.ID] = val
 

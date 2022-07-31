@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"fmt"
+	"time"
 
 	"project6/models"
 
@@ -103,18 +104,89 @@ func (r authorRepoImpl) GetAuthorList(queryParams models.QueryParams) (resp mode
 	return resp, nil
 }
 
-func (r authorRepoImpl) UpdateAuthor(entity models.Author) error {
-	// val, ok := r.db[entity.ID]
-	// if !ok {
-	// 	return errors.New("not found")
-	// }
+func (r authorRepoImpl) UpdateAuthor(entity models.UpdateAuthorModel) error {
+	query := `
+			UPDATE
+				author
+			SET
+				firstname=$1,
+				lastname=$2,
+				updated_at=$3
+			WHERE
+				id=$4
+	
+	`
 
-	// now := time.Now()
-	// val.Content = entity.Content
-	// val.Author = entity.Author
-	// val.UpdateAt = &now
+	_, err := r.db.Exec(query, entity.Firstname, entity.Lastname, time.Now(), entity.ID)
+	if err != nil {
+		return err
+	}
 
-	// r.db[val.ID] = val
+	return nil
+}
+
+func (r authorRepoImpl) GetAuthorByID(id string) (resp models.AuthorGetByIDModel, err error) {
+	query := `SELECT *
+			  FROM author
+			  WHERE id=$1	
+`
+	query2 := `SELECT id,title,body,author_id,created_at,updated_at from article where author_id=$1`
+	rows, err := r.db.Query(query, id)
+	if err != nil {
+		fmt.Println(err)
+		return resp, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(
+			&resp.ID,
+			&resp.Firstname,
+			&resp.Lastname,
+			&resp.CreatedAt,
+			&resp.UpdateAt,
+		)
+		if err != nil {
+			fmt.Println(err)
+			return resp, nil
+		}
+
+		rowArticle, err := r.db.Query(query2, id)
+		if err != nil {
+			fmt.Println(err)
+			return resp, err
+		}
+		for rowArticle.Next() {
+			var article models.Article
+			err = rowArticle.Scan(
+				&article.ID,
+				&article.Title,
+				&article.Body,
+				&article.AuthorID,
+				&article.CreatedAt,
+				&article.UpdateAt,
+			)
+			if err != nil {
+				fmt.Println(err)
+				return resp, nil
+			}
+
+			resp.Articles = append(resp.Articles, article)
+
+		}
+
+	}
+
+	return resp, nil
+}
+
+func (r authorRepoImpl) DeleteAuthor(id string) error {
+
+	query := `DELETE FROM author WHERE id=$1`
+
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

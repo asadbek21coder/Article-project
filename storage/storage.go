@@ -19,19 +19,7 @@ type ArticleRepoI interface {
 type AuthorRepoI interface {
 	CreateAuthor(entity models.CreateAuthorModel) error
 	GetAuthorList(queryParams models.QueryParams) (resp models.AuthorList, err error)
-	// GetAuthorByID(id string) (resp models.AuthorGetByIDModel, err error)
-	UpdateAuthor(entity models.Author) error
-	// DeleteAuthor(id string) error
+	GetAuthorByID(id string) (resp models.AuthorGetByIDModel, err error)
+	UpdateAuthor(entity models.UpdateAuthorModel) error
+	DeleteAuthor(id string) error
 }
-
-// type StoreImpl struct {
-// 	Article postgres.ArticleRepoImpl
-// 	Author  postgres.AuthorRepoImpl
-// }
-
-// var Store StoreImpl
-
-// func init() {
-// 	Store.Article = postgres.ArticleRepo
-// 	Store.Author = postgres.AuthorRepo
-// }

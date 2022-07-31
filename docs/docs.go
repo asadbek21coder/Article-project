@@ -340,6 +340,51 @@ var doc = `{
                     }
                 }
             },
+            "put": {
+                "description": "Update an author based on given body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "author"
+                ],
+                "summary": "Update an author",
+                "operationId": "update-author",
+                "parameters": [
+                    {
+                        "description": "author body",
+                        "name": "author",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateAuthorModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create an author based on given body",
                 "consumes": [
@@ -385,6 +430,94 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/authors/{id}": {
+            "get": {
+                "description": "Delete an author based on given id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "author"
+                ],
+                "summary": "Get an author",
+                "operationId": "get-author_by_id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an author based on given id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "author"
+                ],
+                "summary": "Delete an author",
+                "operationId": "delete-author",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error Response",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -404,8 +537,7 @@ var doc = `{
                     "type": "string"
                 },
                 "title": {
-                    "type": "string",
-                    "default": "Lorem"
+                    "type": "string"
                 },
                 "update_at": {
                     "type": "string"
@@ -519,6 +651,22 @@ var doc = `{
                 "title": {
                     "type": "string",
                     "default": "Lorem"
+                }
+            }
+        },
+        "models.UpdateAuthorModel": {
+            "type": "object",
+            "properties": {
+                "firstname": {
+                    "type": "string",
+                    "example": "John"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string",
+                    "example": "Doe"
                 }
             }
         }

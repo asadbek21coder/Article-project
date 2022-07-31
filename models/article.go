@@ -8,8 +8,9 @@ type Content struct {
 }
 
 type Article struct {
-	ID string `json:"id"`
-	Content
+	ID        string     `json:"id"`
+	Title     string     `json:"title"`
+	Body      string     `json:"body"`
 	AuthorID  string     `json:"author_id"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdateAt  *time.Time `json:"update_at"`

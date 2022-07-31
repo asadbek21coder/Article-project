@@ -11,7 +11,6 @@ definitions:
       id:
         type: string
       title:
-        default: Lorem
         type: string
       update_at:
         type: string
@@ -87,6 +86,17 @@ definitions:
         type: string
       title:
         default: Lorem
+        type: string
+    type: object
+  models.UpdateAuthorModel:
+    properties:
+      firstname:
+        example: John
+        type: string
+      id:
+        type: string
+      lastname:
+        example: Doe
         type: string
     type: object
 info:
@@ -327,6 +337,95 @@ paths:
           schema:
             $ref: '#/definitions/models.DefaultResponse'
       summary: Create an author
+      tags:
+      - author
+    put:
+      consumes:
+      - application/json
+      description: Update an author based on given body
+      operationId: update-author
+      parameters:
+      - description: author body
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateAuthorModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "400":
+          description: Bad Request Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "500":
+          description: Internal Server Error Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+      summary: Update an author
+      tags:
+      - author
+  /authors/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an author based on given id
+      operationId: delete-author
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "400":
+          description: Bad Request Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "500":
+          description: Internal Server Error Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+      summary: Delete an author
+      tags:
+      - author
+    get:
+      consumes:
+      - application/json
+      description: Delete an author based on given id
+      operationId: get-author_by_id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "400":
+          description: Bad Request Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+        "500":
+          description: Internal Server Error Response
+          schema:
+            $ref: '#/definitions/models.DefaultResponse'
+      summary: Get an author
       tags:
       - author
 swagger: "2.0"
